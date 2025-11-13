@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vishnu Traders | Billing & Inventory</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <img
+          src="assets/Vishnu_traders_Logo.png"
+          alt="Vishnu Traders logo"
+          class="brand-logo"
+        />
+        <div class="brand-text">
+          <h1>Vishnu Traders</h1>
+          <p class="tagline">Billing, inventory, and invoicing for cement & bricks</p>
+        </div>
+      </div>
+      <nav class="main-nav" role="tablist" aria-label="Sections">
+        <button
+          type="button"
+          id="inventory-tab"
+          class="nav-link is-active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="inventory"
+          data-target="inventory"
+        >
+          Inventory
+        </button>
+        <button
+          type="button"
+          id="sales-tab"
+          class="nav-link"
+          role="tab"
+          aria-selected="false"
+          aria-controls="sales"
+          data-target="sales"
+        >
+          Daily Sales
+        </button>
+        <button
+          type="button"
+          id="invoice-tab"
+          class="nav-link"
+          role="tab"
+          aria-selected="false"
+          aria-controls="invoice"
+          data-target="invoice"
+        >
+          Invoice
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="inventory" class="card" role="tabpanel" aria-labelledby="inventory-tab">
+        <header class="card-header">
+          <h2>Inventory Overview</h2>
+          <p>Track current stock and update in real time.</p>
+        </header>
+        <div class="inventory-grid">
+          <article class="product-card" data-product="cement">
+            <h3>Cement</h3>
+            <p class="stock-label">In stock</p>
+            <p class="stock-value">
+              <span class="current-stock" data-stock-display="cement">0</span> bags
+            </p>
+            <form class="stock-form" data-product="cement">
+              <label for="cement-adjust">Adjust quantity</label>
+              <div class="number-input">
+                <input
+                  id="cement-adjust"
+                  name="quantity"
+                  type="number"
+                  min="1"
+                  step="1"
+                  required
+                />
+                <button type="submit" class="primary">Add stock</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="product-card" data-product="bricks">
+            <h3>Bricks</h3>
+            <p class="stock-label">In stock</p>
+            <p class="stock-value">
+              <span class="current-stock" data-stock-display="bricks">0</span> units
+            </p>
+            <form class="stock-form" data-product="bricks">
+              <label for="bricks-adjust">Adjust quantity</label>
+              <div class="number-input">
+                <input
+                  id="bricks-adjust"
+                  name="quantity"
+                  type="number"
+                  min="1"
+                  step="1"
+                  required
+                />
+                <button type="submit" class="primary">Add stock</button>
+              </div>
+            </form>
+          </article>
+        </div>
+      </section>
+
+      <section id="sales" class="card" role="tabpanel" aria-labelledby="sales-tab" hidden>
+        <header class="card-header">
+          <h2>Daily Sales</h2>
+          <p>Log sales and view today’s totals.</p>
+        </header>
+        <form id="sale-form" class="stacked-form">
+          <div class="field">
+            <label for="sale-date">Sale date</label>
+            <input type="date" id="sale-date" name="saleDate" required />
+          </div>
+          <div class="field">
+            <label for="product">Product</label>
+            <select id="product" name="product" required>
+              <option value="cement">Cement</option>
+              <option value="bricks">Bricks</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" name="quantity" min="1" required />
+          </div>
+          <div class="field">
+            <label for="unit-price">Unit price (₹)</label>
+            <input
+              type="number"
+              id="unit-price"
+              name="unitPrice"
+              min="0"
+              step="0.01"
+              required
+            />
+          </div>
+          <div class="field">
+            <label for="total">Total amount (₹)</label>
+            <input
+              type="number"
+              id="total"
+              name="total"
+              min="0"
+              step="0.01"
+              required
+              readonly
+            />
+          </div>
+          <button type="submit" class="primary">Record sale</button>
+        </form>
+
+        <div class="sales-summary">
+          <h3>Today’s Summary</h3>
+          <div class="summary-grid" id="sales-summary"></div>
+        </div>
+
+        <div class="sales-log">
+          <header>
+            <h3>Sales log</h3>
+            <span id="sales-count">0 entries</span>
+          </header>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Day</th>
+                  <th>Time</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Total (₹)</th>
+                </tr>
+              </thead>
+              <tbody id="sales-rows">
+                <tr>
+                  <td colspan="6" class="empty">No sales recorded yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="invoice" class="card" role="tabpanel" aria-labelledby="invoice-tab" hidden>
+        <header class="card-header">
+          <h2>Invoice Generator</h2>
+          <p>Create invoices and keep a history for reference.</p>
+        </header>
+
+        <form id="invoice-form" class="stacked-form">
+          <fieldset>
+            <legend>Customer details</legend>
+            <div class="field">
+              <label for="customer-name">Customer name</label>
+              <input type="text" id="customer-name" name="customerName" required />
+            </div>
+            <div class="field">
+              <label for="customer-contact">Contact number</label>
+              <input
+                type="tel"
+                id="customer-contact"
+                name="customerContact"
+                placeholder="+91 98765 43210"
+              />
+            </div>
+            <div class="field">
+              <label for="customer-email">Email</label>
+              <input type="email" id="customer-email" name="customerEmail" />
+            </div>
+            <div class="field">
+              <label for="billing-address">Billing address</label>
+              <textarea
+                id="billing-address"
+                name="billingAddress"
+                rows="3"
+                placeholder="Street, City, PIN"
+              ></textarea>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Invoice items</legend>
+            <div class="grid-two">
+              <div class="field">
+                <label for="cement-qty">Cement quantity (bags)</label>
+                <input
+                  type="number"
+                  id="cement-qty"
+                  name="cementQty"
+                  min="0"
+                  step="1"
+                  value="0"
+                />
+              </div>
+              <div class="field">
+                <label for="cement-price">Cement unit price (₹)</label>
+                <input
+                  type="number"
+                  id="cement-price"
+                  name="cementPrice"
+                  min="0"
+                  step="0.01"
+                  value="450"
+                />
+              </div>
+              <div class="field">
+                <label for="bricks-qty">Bricks quantity (units)</label>
+                <input
+                  type="number"
+                  id="bricks-qty"
+                  name="bricksQty"
+                  min="0"
+                  step="1"
+                  value="0"
+                />
+              </div>
+              <div class="field">
+                <label for="bricks-price">Bricks unit price (₹)</label>
+                <input
+                  type="number"
+                  id="bricks-price"
+                  name="bricksPrice"
+                  min="0"
+                  step="0.01"
+                  value="6"
+                />
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Services & charges</legend>
+            <div class="grid-two">
+              <div class="field">
+                <label for="transport-cost">Transport cost (₹)</label>
+                <input
+                  type="number"
+                  id="transport-cost"
+                  name="transportCost"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                />
+              </div>
+              <div class="field">
+                <label for="labour-persons">Labour persons</label>
+                <input
+                  type="number"
+                  id="labour-persons"
+                  name="labourPersons"
+                  min="0"
+                  step="1"
+                  value="0"
+                />
+              </div>
+              <div class="field">
+                <label for="labour-cost">Cost per person (₹)</label>
+                <input
+                  type="number"
+                  id="labour-cost"
+                  name="labourCostPerPerson"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                />
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label for="invoice-notes">Notes</label>
+            <textarea
+              id="invoice-notes"
+              name="notes"
+              rows="3"
+              placeholder="Payment terms, delivery notes, etc."
+            ></textarea>
+          </div>
+
+          <button type="submit" class="primary">Create invoice</button>
+        </form>
+
+        <div class="invoice-output">
+          <header>
+            <h3>Latest invoice</h3>
+            <div class="invoice-actions">
+              <button type="button" id="download-invoice">Download PDF</button>
+              <button type="button" id="print-invoice">Print</button>
+            </div>
+          </header>
+          <div id="invoice-preview" class="invoice-preview empty">
+            <p>No invoice generated yet.</p>
+          </div>
+        </div>
+
+        <div class="invoice-history">
+          <header>
+            <h3>Recent invoices</h3>
+          </header>
+          <ul id="invoice-list" class="invoice-list">
+            <li class="empty">No invoices stored yet.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>© <span id="footer-year"></span> Vishnu Traders. All rights reserved.</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+
