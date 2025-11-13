@@ -2,14 +2,15 @@ const STORAGE_KEYS = {
   inventory: "yardtrack_inventory",
   sales: "yardtrack_sales",
   invoices: "yardtrack_invoices",
+  invoiceMeta: "yardtrack_invoice_meta",
 };
 
 const COMPANY = {
   name: "Vishnu Traders",
   tagline: "Quality cement & bricks for every build",
   logoPath: "assets/Vishnu_traders_Logo.png",
-  address: "Plot 12, Highway Road, Madurai, Tamil Nadu",
-  contact: "+91 98765 43210",
+  address: "HP petrol punk near ,Anaimalai-Dhali road, Thensangampalayam,Pollachi",
+  contact: "9688251132",
   email: "sales@vishnutraders.in",
 };
 
@@ -24,6 +25,7 @@ const state = {
   invoices: loadInvoices(),
   latestInvoiceId: null,
   currentView: "inventory",
+  invoiceSequence: loadInvoiceSequence(),
 };
 
 const dom = {};
@@ -679,12 +681,29 @@ function loadInvoices() {
   return readFromStorage(STORAGE_KEYS.invoices) || [];
 }
 
+function loadInvoiceSequence() {
+  const stored = readFromStorage(STORAGE_KEYS.invoiceMeta);
+  if (
+    stored &&
+    typeof stored === "object" &&
+    typeof stored.lastDate === "string" &&
+    typeof stored.sequence === "number"
+  ) {
+    return stored;
+  }
+  return { lastDate: null, sequence: 0 };
+}
+
 function saveToStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
     console.error("Failed to write to localStorage", error);
   }
+}
+
+function persistInvoiceSequence() {
+  saveToStorage(STORAGE_KEYS.invoiceMeta, state.invoiceSequence);
 }
 
 function readFromStorage(key) {
@@ -703,11 +722,23 @@ function formatDateInput(date) {
 
 function generateInvoiceId() {
   const now = new Date();
-  return `INV${now.getFullYear()}${String(now.getMonth() + 1).padStart(
+  const dateStamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(
     2,
     "0"
-  )}${String(now.getDate()).padStart(2, "0")}-${Math.floor(
-    Math.random() * 9000 + 1000
+  )}${String(now.getDate()).padStart(2, "0")}`;
+
+  if (state.invoiceSequence.lastDate === dateStamp) {
+    state.invoiceSequence.sequence += 1;
+  } else {
+    state.invoiceSequence.lastDate = dateStamp;
+    state.invoiceSequence.sequence = 1;
+  }
+
+  persistInvoiceSequence();
+
+  return `INVT${dateStamp}${String(state.invoiceSequence.sequence).padStart(
+    3,
+    "0"
   )}`;
 }
 
